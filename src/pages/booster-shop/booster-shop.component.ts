@@ -7,6 +7,8 @@ import { CardModalComponent } from '../../components/card-modal/card-modal.compo
 import { BehaviorSubject, catchError, forkJoin, of, tap } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { AppComponent } from '../../app/app.component';
+import pokemonTypes from '../../utils/pokemon-types';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-booster-shop',
@@ -23,8 +25,10 @@ export class BoosterShopComponent implements OnInit {
   selectedImage: string | null = null;
   isModalVisible: boolean = false;
 
+  allowedTypes: any = []
+
   constructor(
-    private pokemonService: PokemonService, private appComponent: AppComponent
+    private pokemonService: PokemonService, private appComponent: AppComponent, private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -35,7 +39,10 @@ export class BoosterShopComponent implements OnInit {
     this.appComponent.showLoading();
     this.pokemonService.getCardsTypes().pipe(
       tap(response => {
-        this.types = response.data;
+        this.types = response.data.map(type => type.toLowerCase());
+        this.allowedTypes = pokemonTypes.filter(type =>
+          this.types.includes(type.type.toLowerCase())
+        );
         this.appComponent.hideLoading();
       }),
       catchError(error => {
@@ -44,6 +51,10 @@ export class BoosterShopComponent implements OnInit {
         return of([]);
       })
     ).subscribe();
+  }
+
+  selectType(type: string) {
+    this.selectedType = type;
   }
 
   openBooster() {
@@ -67,6 +78,15 @@ export class BoosterShopComponent implements OnInit {
           const rareCards = getRandomElements(rareResponse.data, 1);
 
           this.cardsSubject.next([...baseCards, ...energyCards, ...trainerCards, ...rareCards]);
+
+          // salva no usuário
+          const currentUser = this.authService.getUser();
+          if (currentUser) {
+            currentUser.cards = [...currentUser.cards, ...baseCards, ...energyCards, ...trainerCards, ...rareCards];
+            currentUser.money -= 100;
+            currentUser.lastUpdate = new Date();
+            this.authService.updateUser(currentUser);
+          }
           this.appComponent.hideLoading();
         },
         error: () => {
