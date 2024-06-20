@@ -1,4 +1,6 @@
-export const userMocks = [
+import { User } from "../models/user.model";
+
+export const userMocks: User[] = [
   {
     id: '1',
     name: 'Ash Ketchum',
@@ -8,7 +10,8 @@ export const userMocks = [
     decks: [],
     money: 1000,
     createdAt: new Date(),
-    lastLogin: new Date()
+    lastLogin: new Date(),
+    lastUpdate: new Date()
   },
   {
     id: '2',
@@ -19,6 +22,7 @@ export const userMocks = [
     decks: [],
     money: 1000,
     createdAt: new Date(),
-    lastLogin: new Date()
+    lastLogin: new Date(),
+    lastUpdate: new Date()
   }
 ];

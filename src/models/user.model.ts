@@ -10,6 +10,7 @@ export interface User {
   money: number;
   createdAt: Date;
   lastLogin: Date;
+  lastUpdate: Date;
 }
 
 export interface Deck {
