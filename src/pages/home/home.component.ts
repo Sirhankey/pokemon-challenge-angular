@@ -1,7 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { PokemonService } from '../../services/pokemon.service';
-import { Card } from '../../models/card.model';
 import { Router } from '@angular/router';
 
 @Component({

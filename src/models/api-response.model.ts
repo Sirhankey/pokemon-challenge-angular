@@ -7,3 +7,7 @@ export interface ApiResponse {
   count: number;
   totalCount: number;
 }
+
+export interface ApiTypesResponse {
+  data: string[];
+}
