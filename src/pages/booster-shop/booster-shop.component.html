@@ -1,13 +1,12 @@
 <div class="container mx-auto p-4">
   <h1 class="text-2xl font-bold mb-4">Loja Pokemon</h1>
-  <button
-    class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
-    (click)="openBooster()">
+  <button class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700" (click)="openBooster()">
     Abrir booster
   </button>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
-    <div *ngFor="let card of cards" class="card bg-white p-4 rounded shadow">
+    <div *ngFor="let card of cards" class="card bg-white p-4 rounded shadow cursor-pointer"
+      (click)="showImage(card.images.large)">
       <img [src]="card.images.small" [alt]="card.name" class="w-full h-auto mb-2">
       <h2 class="text-lg font-semibold">{{ card.name }}</h2>
       <p class="text-gray-600">{{ card.supertype }}</p>
@@ -31,4 +30,10 @@
       </div>
     </div>
   </div>
+
+  <app-card-modal
+    [imageSrc]="selectedImage"
+    [isVisible]="isModalVisible"
+    (closeModal)="handleCloseModal()">
+  </app-card-modal>
 </div>
