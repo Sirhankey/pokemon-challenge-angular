@@ -24,6 +24,8 @@ export class BoosterShopComponent implements OnInit {
   selectedType: string | null = null;
   selectedImage: string | null = null;
   isModalVisible: boolean = false;
+  hoverType: string | null = null;
+  isLoading: boolean = false;
 
   allowedTypes: any = []
 
@@ -37,6 +39,7 @@ export class BoosterShopComponent implements OnInit {
 
   loadCardTypes() {
     this.appComponent.showLoading();
+    this.isLoading = true;
     this.pokemonService.getCardsTypes().pipe(
       tap(response => {
         this.types = response.data.map(type => type.toLowerCase());
@@ -44,9 +47,11 @@ export class BoosterShopComponent implements OnInit {
           this.types.includes(type.type.toLowerCase())
         );
         this.appComponent.hideLoading();
+        this.isLoading = false;
       }),
       catchError(error => {
         this.appComponent.hideLoading();
+        this.isLoading = false;
         console.error(error);
         return of([]);
       })
@@ -61,6 +66,7 @@ export class BoosterShopComponent implements OnInit {
     if (!this.selectedType) return;
     this.cardsSubject.next([]);
     this.appComponent.showLoading();
+    this.isLoading = true;
 
     const pokemonLimit = 'nationalPokedexNumbers:[1 TO 250]';
 
@@ -88,9 +94,11 @@ export class BoosterShopComponent implements OnInit {
             this.authService.updateUser(currentUser);
           }
           this.appComponent.hideLoading();
+          this.isLoading = false;
         },
         error: () => {
           this.appComponent.hideLoading();
+          this.isLoading = false;
         }
       })
     ).subscribe();
