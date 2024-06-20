@@ -1,11 +1,17 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from '../pages/home/home.component';
 import { BoosterShopComponent } from '../pages/booster-shop/booster-shop.component';
+import { LoginComponent } from '../pages/login/login.component';
+import { AuthGuard } from '../services/auth.guard';
+import { NotFoundComponent } from '../pages/not-found/not-found.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent },
-  { path: 'shop', component: BoosterShopComponent }
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: 'shop', component: BoosterShopComponent, canActivate: [AuthGuard] },
+  { path: 'login', component: LoginComponent },
+  { path: '404', component: NotFoundComponent },
+  { path: '**', redirectTo: '404' }
 
   // {path: 'decks', component: DecksComponent},
 ];
