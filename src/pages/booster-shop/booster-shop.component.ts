@@ -4,6 +4,7 @@ import { Card } from '../../models/card.model';
 import { PokemonService } from '../../services/pokemon.service';
 import { getRandomElements } from '../../utils/utility';
 import { CardModalComponent } from '../../components/card-modal/card-modal.component';
+import { BehaviorSubject, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-booster-shop',
@@ -13,7 +14,9 @@ import { CardModalComponent } from '../../components/card-modal/card-modal.compo
   styleUrl: './booster-shop.component.scss'
 })
 export class BoosterShopComponent implements OnInit {
-  cards: Card[] = [];
+  private cardsSubject = new BehaviorSubject<Card[]>([]);
+  cards$ = this.cardsSubject.asObservable();
+  // cards: Card[] = [];
   selectedImage: string | null = null;
   isModalVisible: boolean = false;
 
@@ -22,19 +25,31 @@ export class BoosterShopComponent implements OnInit {
   ) { }
 
   openBooster() {
-    this.cards = [];
+    // this.cards = [];
+    this.cardsSubject.next([]);
 
-    this.pokemonService.searchCards('set.series:base').subscribe(baseResponse => {
+    const baseCards$ = this.pokemonService.searchCards('set.series:base');
+    const rareCards$ = this.pokemonService.searchCards('rarity:Rare');
+
+    forkJoin([baseCards$, rareCards$]).subscribe(([baseResponse, rareResponse]) => {
       const baseCards = getRandomElements(baseResponse.data, 9);
+      const rareCards = getRandomElements(rareResponse.data, 1);
 
-      this.cards = [...this.cards, ...baseCards];
-
-      this.pokemonService.searchCards('rarity:Rare').subscribe(legendResponse => {
-        const legendCards = getRandomElements(legendResponse.data, 1);
-
-        this.cards = [...this.cards, ...legendCards];
-      });
+      this.cardsSubject.next([...baseCards, ...rareCards]);
     });
+
+    // this.pokemonService.searchCards('set.series:base').subscribe(baseResponse => {
+    //   const baseCards = getRandomElements(baseResponse.data, 9);
+
+    //   this.cardsSubject.next([...this.cardsSubject.getValue(), ...baseCards]);
+
+    //   this.pokemonService.searchCards('rarity:Rare').subscribe(legendResponse => {
+    //     const legendCards = getRandomElements(legendResponse.data, 1);
+
+    //     this.cardsSubject.next([...this.cardsSubject.getValue(), ...legendCards]);
+    //   });
+    // });
+
   }
 
 
