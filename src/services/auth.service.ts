@@ -32,4 +32,8 @@ export class AuthService {
   isAuthenticated(): boolean {
     return !!localStorage.getItem('user');
   }
+
+  updateUser(user: any): void {
+    localStorage.setItem('user', JSON.stringify(user));
+  }
 }
