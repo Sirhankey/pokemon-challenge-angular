@@ -1,91 +1,72 @@
 <div class="container mx-auto p-4">
   <div class="flex flex-col justify-center items-center">
     <h1 class="text-2xl font-bold mb-2">Loja Pokemon</h1>
+    <label class="block text-gray-700 mb-4">Escolha a raridade do booster:</label>
+  </div>
+  <div class="mb-4 flex justify-center">
+    <button
+      *ngFor="let booster of boosters"
+      [ngClass]="{
+        'bg-gray-500': booster.rarity === 'Common',
+        'bg-blue-500': booster.rarity === 'Rare',
+        'bg-yellow-500': booster.rarity === 'LEGEND',
+        'text-white': true,
+        'py-2': true,
+        'px-4': true,
+        'm-2': true,
+        'rounded': true,
+        'hover:bg-gray-700': booster.rarity === 'Common' && !isLoading,
+        'hover:bg-blue-700': booster.rarity === 'Rare' && !isLoading,
+        'hover:bg-yellow-700': booster.rarity === 'LEGEND' && !isLoading,
+        'pressed': selectedRarity === booster.rarity
+      }"
+      [disabled]="isLoading"
+      (click)="selectRarity(booster.rarity)">
+      {{ booster.name }} ($ {{ booster.price }})
+    </button>
+  </div>
+  <div class="flex flex-col justify-center items-center" *ngIf="selectedRarity">
     <label class="block text-gray-700 mb-4">Escolha o tipo de booster:</label>
   </div>
-  <div class="mb-4">
+  <div class="mb-4" *ngIf="selectedRarity">
     <div class="flex flex-wrap justify-center">
       <div
-      *ngFor="let type of allowedTypes"
-      class="m-2 relative"
-      (mouseenter)="hoverType = type.type"
-      (mouseleave)="hoverType = null">
-      <img
-        [src]="type.src"
-        [alt]="type.alt"
-        [title]="type.type"
-        [class]="type.className"
-        class="w-16 h-16 rounded-full cursor-pointer hover:shadow-lg p-2 custom-shadow transition-all duration-300"
-        (click)="selectType(type.type)"
-        [class.border-4]="selectedType === type.type"
-        [class.border-black-500]="selectedType === type.type"
-        [class.blur]="hoverType && hoverType !== type.type"
-        [class.scale-90]="selectedType && selectedType !== type.type"
-        [attr.disabled]="isLoading ? true : null">
+        *ngFor="let type of allowedTypes"
+        class="m-2 relative"
+        (mouseenter)="hoverType = type.type"
+        (mouseleave)="hoverType = null">
+        <img
+          [src]="type.src"
+          [alt]="type.alt"
+          [title]="type.type"
+          [class]="type.className"
+          class="w-16 h-16 rounded-full cursor-pointer hover:shadow-lg p-2 custom-shadow transition-all duration-300"
+          (click)="selectType(type.type)"
+          [class.border-4]="selectedType === type.type"
+          [class.border-black-500]="selectedType === type.type"
+          [class.blur]="hoverType && hoverType !== type.type"
+          [class.scale-90]="selectedType && selectedType !== type.type"
+          [attr.disabled]="isLoading ? true : null">
       </div>
     </div>
   </div>
-  <div class="flex align-middle justify-center mt-2">
+  <div class="flex align-middle justify-center mt-2" *ngIf="selectedRarity && selectedType">
     <button
       class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
       [disabled]="!selectedType || isLoading"
-      (click)="openBooster()">
-      Abrir booster
+      (click)="buyBooster()">
+      Comprar booster
     </button>
   </div>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
-    <div *ngFor="let card of cards$ | async" class="card bg-white p-4 rounded shadow cursor-pointer" (click)="showImage(card.images.large)">
-      <ng-container [ngSwitch]="card.supertype">
-        <ng-template [ngSwitchCase]="'Pokémon'">
-          <img [src]="card.images.small" [alt]="card.name" class="w-full h-auto mb-2">
-          <h2 class="text-lg font-semibold">{{ card.name }}</h2>
-          <p class="text-gray-600">{{ card.supertype }}</p>
-          <p class="text-gray-600">{{ card.types?.join(', ') }}</p>
-          <p class="text-gray-600">HP: {{ card.hp }}</p>
-          <div *ngIf="card.attacks?.length">
-            <h3 class="text-md font-semibold mt-2">Attacks:</h3>
-            <ul>
-              <li *ngFor="let attack of card.attacks">
-                <strong>{{ attack.name }}:</strong> {{ attack.damage }} damage
-              </li>
-            </ul>
-          </div>
-          <div *ngIf="card.weaknesses?.length">
-            <h3 class="text-md font-semibold mt-2">Weaknesses:</h3>
-            <ul>
-              <li *ngFor="let weakness of card.weaknesses">
-                <strong>{{ weakness.type }}:</strong> {{ weakness.value }}
-              </li>
-            </ul>
-          </div>
-        </ng-template>
-
-        <ng-template [ngSwitchCase]="'Energy'">
-          <img [src]="card.images.small" [alt]="card.name" class="w-full h-auto mb-2">
-          <h2 class="text-lg font-semibold">{{ card.name }}</h2>
-          <p class="text-gray-600">{{ card.supertype }}</p>
-          <p class="text-gray-600">{{ card.subtypes }}</p>
-          <div *ngIf="card.rules?.length">
-            <h3 class="text-md font-semibold mt-2">Rules:</h3>
-            <ul>
-              <li *ngFor="let rule of card.rules">{{ rule }}</li>
-            </ul>
-          </div>
-        </ng-template>
-
-        <ng-template [ngSwitchCase]="'Trainer'">
-          <img [src]="card.images.small" [alt]="card.name" class="w-full h-auto mb-2">
-          <h2 class="text-lg font-semibold">{{ card.name }}</h2>
-          <p class="text-gray-600">{{ card.supertype }}</p>
-          <p class="text-gray-600">{{ card.subtypes }}</p>
-          <div *ngIf="card.rules?.length">
-            <h3 class="text-md font-semibold mt-2">Rules:</h3>
-            <ul>
-              <li *ngFor="let rule of card.rules">{{ rule }}</li>
-            </ul>
-          </div>
-        </ng-template>
+    <div *ngFor="let card of cards$ | async" class="card bg-white p-4 rounded shadow cursor-pointer relative"
+      (mouseenter)="hoveredCard = card"
+      (mouseleave)="hoveredCard = null"
+      (click)="showImage(card.images.large)">
+      <img [src]="card.images.small" [alt]="card.name" class="w-full h-auto mb-2">
+      <ng-container *ngIf="hoveredCard === card">
+        <app-tooltip [card]="card"></app-tooltip>
       </ng-container>
     </div>
   </div>

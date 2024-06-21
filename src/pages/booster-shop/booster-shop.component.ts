@@ -9,23 +9,30 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from '../../app/app.component';
 import pokemonTypes from '../../utils/pokemon-types';
 import { AuthService } from '../../services/auth.service';
+import { User } from '../../models/user.model';
+import { boosterMocks } from '../../utils/booster-mocks';
+import { TooltipComponent } from '../../components/tooltip/tooltip';
 
 @Component({
   selector: 'app-booster-shop',
   standalone: true,
-  imports: [CommonModule, FormsModule, CardModalComponent],
+  imports: [CommonModule, FormsModule, CardModalComponent, TooltipComponent],
   templateUrl: './booster-shop.component.html',
-  styleUrl: './booster-shop.component.scss'
+  styleUrls: ['./booster-shop.component.scss']
 })
 export class BoosterShopComponent implements OnInit {
   private cardsSubject = new BehaviorSubject<Card[]>([]);
   cards$ = this.cardsSubject.asObservable();
   types: string[] = [];
   selectedType: string | null = null;
+  selectedRarity: string | null = null;
   selectedImage: string | null = null;
   isModalVisible: boolean = false;
   hoverType: string | null = null;
   isLoading: boolean = false;
+  user: User | null = null;
+  boosters = boosterMocks;
+  hoveredCard: Card | null = null;
 
   allowedTypes: any = []
 
@@ -35,6 +42,12 @@ export class BoosterShopComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCardTypes();
+    this.user = this.authService.getUser();
+  }
+
+  selectRarity(rarity: string) {
+    this.selectedRarity = rarity;
+    this.selectedType = null;
   }
 
   loadCardTypes() {
@@ -62,8 +75,22 @@ export class BoosterShopComponent implements OnInit {
     this.selectedType = type;
   }
 
-  openBooster() {
-    if (!this.selectedType) return;
+  buyBooster() {
+    if (!this.selectedRarity || !this.selectedType) return;
+
+    const booster = this.boosters.find(b => b.rarity === this.selectedRarity);
+    if (!booster) return;
+
+    if (this.user?.money && this.user.money < booster.price) {
+      alert('Você não tem dinheiro suficiente!');
+      return;
+    }
+
+    this.openBooster(booster.price);
+  }
+
+  openBooster(boosterPrice: number) {
+    if (!this.selectedType || !this.selectedRarity) return;
     this.cardsSubject.next([]);
     this.appComponent.showLoading();
     this.isLoading = true;
@@ -89,7 +116,7 @@ export class BoosterShopComponent implements OnInit {
           const currentUser = this.authService.getUser();
           if (currentUser) {
             currentUser.cards = [...currentUser.cards, ...baseCards, ...energyCards, ...trainerCards, ...rareCards];
-            currentUser.money -= 100;
+            currentUser.money -= boosterPrice;
             currentUser.lastUpdate = new Date();
             this.authService.updateUser(currentUser);
           }
@@ -113,5 +140,4 @@ export class BoosterShopComponent implements OnInit {
     this.isModalVisible = false;
     this.selectedImage = null;
   }
-
 }
