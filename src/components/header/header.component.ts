@@ -16,6 +16,7 @@ export class HeaderComponent implements OnInit{
   money: number = 0;
   isAuthenticated: boolean = false;
   user: User | null = null;
+  totalCards: number = 0;
 
   constructor(
     private authService: AuthService, private router: Router
@@ -27,6 +28,7 @@ export class HeaderComponent implements OnInit{
       this.isAuthenticated = !!user;
       this.trainerName = user?.name || 'Ash Ketchum';
       this.money = user?.money || 0;
+      this.totalCards = user?.cards?.length || 0;
     });
 
   }

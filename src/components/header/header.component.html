@@ -3,6 +3,8 @@
     <img src="assets/loading/2.png" alt="Pokéball" class="pokeball" (click)="goHome()"/>
     <h1 class="text-xl font-bold">{{ trainerName }}</h1>
     <p>{{ money | currency }}</p>
+    <p>Total cards: {{ totalCards }}</p>
+
   </div>
   <button *ngIf="isAuthenticated" (click)="logout()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded" style="font-size: x-small;">Logout</button>
 </header>
