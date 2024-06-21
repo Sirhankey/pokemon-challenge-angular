@@ -1,23 +1,17 @@
-<div class="bg-default">
-  <div class="container mx-auto p-4">
-    <img
-      src="assets/logo.png"
-      alt="Pallet Town"
-      class="image-container"
-    >
-    <div class="login-container">
-      <div class="mb-4">
-        <label for="email" class="block text-gray-700">Email:</label>
-        <input id="email" [(ngModel)]="email" type="email" class="mt-2 p-2 border rounded w-full">
-      </div>
-      <div class="mb-4">
-        <label for="password" class="block text-gray-700">Password:</label>
-        <input id="password" [(ngModel)]="password" type="password" class="mt-2 p-2 border rounded w-full">
-      </div>
-      <button (click)="login()" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
-        Login
-      </button>
-      <!-- <p class="text-red-500 mt-4" *ngIf="errorMessage">{{ errorMessage }}</p> -->
+<div class="container mx-auto p-4">
+  <img src="assets/logo.png" alt="Pallet Town" class="image-container">
+  <div class="login-container">
+    <div class="mb-4">
+      <label for="email" class="block text-gray-700">Email:</label>
+      <input id="email" [(ngModel)]="email" type="email" class="mt-2 p-2 border rounded w-full">
     </div>
+    <div class="mb-4">
+      <label for="password" class="block text-gray-700">Password:</label>
+      <input id="password" [(ngModel)]="password" type="password" class="mt-2 p-2 border rounded w-full">
+    </div>
+    <button (click)="login()" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
+      Login
+    </button>
+    <!-- <p class="text-red-500 mt-4" *ngIf="errorMessage">{{ errorMessage }}</p> -->
   </div>
 </div>
