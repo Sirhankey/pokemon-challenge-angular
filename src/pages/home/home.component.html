@@ -1,9 +1,29 @@
 <div class="flex justify-center items-center bg-default">
   <div class="relative">
     <img src="assets/pallet.jpg" alt="Pallet Town" class="w-full h-full max-size">
-    <div class="absolute top-1-4 left-1-4 w-16 h-16 cursor-pointer" (click)="navigateTo('shop')"></div>
-    <div class="absolute top-1-4 right-1-4 w-16 h-16 cursor-pointer" (click)="navigateTo('deck-manager')"></div>
+
+    <div class="absolute top-1-4 left-1-4 w-16 h-16 cursor-pointer"
+      (mouseenter)="tooltipText = 'Shop'; showTooltip = true" (mouseleave)="showTooltip = false"
+      (click)="navigateTo('shop')">
+      <ng-container *ngIf="showTooltip && tooltipText === 'Shop'">
+        <app-text-tooltip [text]="'Card shop'"></app-text-tooltip>
+      </ng-container>
+    </div>
+
+    <div class="absolute top-1-4 right-1-4 w-16 h-16 cursor-pointer"
+      (mouseenter)="tooltipText = 'Deck Manager'; showTooltip = true" (mouseleave)="showTooltip = false"
+      (click)="navigateTo('deck-manager')">
+      <ng-container *ngIf="showTooltip && tooltipText === 'Deck Manager'">
+        <app-text-tooltip [text]="'Deck manager'"></app-text-tooltip>
+      </ng-container>
+    </div>
+
     <div class="absolute bottom-1-4 left-1-2 transform -translate-x-1/2 w-custom-lg h-custom-lg cursor-pointer"
-      (click)="navigateTo('tournament')"></div>
+      (mouseenter)="tooltipText = 'Tournament'; showTooltip = true" (mouseleave)="showTooltip = false"
+      (click)="navigateTo('tournament')">
+      <ng-container *ngIf="showTooltip && tooltipText === 'Tournament'">
+        <app-text-tooltip [text]="'Tournament'"></app-text-tooltip>
+      </ng-container>
+    </div>
   </div>
 </div>
