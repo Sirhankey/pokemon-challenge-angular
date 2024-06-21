@@ -24,5 +24,9 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/shop']);
   }
 
+  navigateTo(route: string) {
+    this.router.navigate([`/${route}`]);
+  }
+
 
 }

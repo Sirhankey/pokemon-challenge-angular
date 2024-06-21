@@ -1,0 +1,81 @@
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.w-16 {
+  width: 7rem;
+}
+
+.h-16 {
+  height: 6rem;
+}
+
+.top-1-4 {
+  top: 23%;
+}
+
+.left-1-4 {
+  left: 23%;
+}
+
+.right-1-4 {
+  right: 23%;
+}
+
+.bottom-1-4 {
+  bottom: 33%;
+}
+
+.left-1-2 {
+  left: 64%;
+}
+
+.h-custom-lg{
+  height: 8rem;
+}
+
+.w-custom-lg{
+  width: 12rem;
+}
+
+.transform {
+  transform: translateX(-50%);
+}
+
+.-translate-x-1-2 {
+  transform: translateX(-50%);
+}
+
+.max-size {
+  max-width: 900px;
+  max-height: 600px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 30px;
+  margin: 0px auto;
+  margin-top: 30px;
+}
+
+.bg-default {
+  background-image: url('../../assets/bg-default.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 90vh;
+  opacity: 0.7;
+}
