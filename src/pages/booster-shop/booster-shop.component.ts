@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Card } from '../../models/card.model';
-import { PokemonService } from '../../services/pokemon.service';
+import { PokemonService } from '../../services/pokemon/pokemon.service';
 import { getRandomElements } from '../../utils/utility';
 import { CardModalComponent } from '../../components/card-modal/card-modal.component';
 import { BehaviorSubject, catchError, forkJoin, of, tap } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { AppComponent } from '../../app/app.component';
 import pokemonTypes from '../../utils/pokemon-types';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { User } from '../../models/user.model';
 import { boosterMocks } from '../../utils/booster-mocks';
 import { TooltipComponent } from '../../components/tooltip/tooltip';

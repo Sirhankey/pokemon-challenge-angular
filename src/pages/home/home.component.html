@@ -12,7 +12,7 @@
 
     <div class="absolute top-1-4 right-1-4 w-16 h-16 cursor-pointer"
       (mouseenter)="tooltipText = 'Deck Manager'; showTooltip = true" (mouseleave)="showTooltip = false"
-      (click)="navigateTo('deck-manager')">
+      (click)="navigateTo('decks')">
       <ng-container *ngIf="showTooltip && tooltipText === 'Deck Manager'">
         <app-text-tooltip [text]="'Deck manager'"></app-text-tooltip>
       </ng-container>
