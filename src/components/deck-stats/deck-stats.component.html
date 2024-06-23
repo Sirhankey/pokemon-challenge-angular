@@ -1,0 +1,22 @@
+<div *ngIf="selectedDeck" class="deck-stats">
+  <mat-expansion-panel (opened)="onPanelToggle()" (closed)="onPanelToggle()">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Deck Stats
+      </mat-panel-title>
+      <mat-panel-description>
+        Total: {{ totalCards }} cartas
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div class="deck-details">
+      <!-- <p>Total de Cartas: {{ totalCards }}</p> -->
+      <p>Total de Energias: {{ totalEnergy }}</p>
+      <p>Total de Treinadores: {{ totalTrainers }}</p>
+      <p>Total de Pokémons: {{ totalPokemons }}</p>
+      <div *ngFor="let type of pokemonTypes" class="type-stat">
+        <img [src]="type.icon" [ngClass]="type.bg" [alt]="type.type" class="type-icon">
+        <span>{{ type.type }}: {{ type.count }}</span>
+      </div>
+    </div>
+  </mat-expansion-panel>
+</div>
