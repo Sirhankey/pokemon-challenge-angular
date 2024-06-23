@@ -1,0 +1,77 @@
+<div class="container mx-auto p-4 bg-default">
+  <div class="flex">
+    <!-- Coluna Esquerda -->
+    <div class="w-2-5 p-4">
+      <h1 class="text-2xl font-bold mb-4">Gerenciador de Baralhos</h1>
+
+      <!-- Listagem de Decks Existentes -->
+      <div class="deck-list-container flex mb-4 overflow-x-auto">
+        <div class="border rounded p-2 m-2 cursor-pointer" (click)="toggleNewDeckInput()">
+          <span class="text-lg font-semibold">+</span>
+        </div>
+        <div *ngIf="showNewDeckInput" class="border rounded p-2 m-2">
+          <input type="text" [(ngModel)]="newDeckName" placeholder="Nome do novo deck" class="border rounded p-2">
+          <button (click)="createDeck()" class="bg-blue-500 text-white px-2 py-1 rounded-full hover:bg-blue-700 mt-2 ml-2">+</button>
+        </div>
+        <div *ngFor="let deck of decks" class="deck-item border rounded p-2 m-2 cursor-pointer relative" [ngClass]="{'selected-deck': selectedDeck?.id === deck.id}" (click)="selectDeck(deck)">
+          <span class="font-semibold">{{ deck.name }}</span>
+          <button (click)="removeDeck(deck); $event.stopPropagation()" class="bg-red-500 text-white rounded-full hover:bg-red-700 absolute close-button">X</button>
+        </div>
+      </div>
+
+      <!-- Estatísticas do Deck Selecionado -->
+      <app-deck-stats [selectedDeck]="selectedDeck" (panelStateChange)="onPanelStateChange($event)"></app-deck-stats>
+
+      <!-- Detalhes do Deck Selecionado -->
+      <div *ngIf="selectedDeck" class="mb-4">
+        <h2 class="text-xl font-semibold">Editar Baralho: {{ selectedDeck.name }}</h2>
+        <div [ngClass]="{'deck-cards-container-expanded': panelOpenState, 'deck-cards-container-collapsed': !panelOpenState}" class="grid grid-cols-4 gap-0.5 mb-4 deck-cards-container">
+          <div *ngFor="let card of selectedCards" class="border rounded p-2 relative">
+            <button (click)="removeCardFromDeck(card)"
+              class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-700 absolute top-0 right-0 m-1">X</button>
+            <img [src]="card.images.small" alt="{{card.name}}" class="w-full mb-2 deck-cards">
+          </div>
+        </div>
+        <button (click)="saveDeck()"
+          class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 mt-4 w-full">Salvar Baralho</button>
+      </div>
+    </div>
+
+    <!-- Coluna Direita -->
+    <div class="w-3-5 p-4">
+      <h2 class="text-xl font-semibold mb-4">Suas Cartas</h2>
+
+      <div class="flex mb-4">
+        <select class="border rounded p-2 mr-2" [(ngModel)]="cardTypeFilter" (change)="filterCards()">
+          <option value="">Todos</option>
+          <option value="Pokémon">Pokémon</option>
+          <option value="Trainer">Trainer</option>
+          <option value="Energy">Energy</option>
+        </select>
+        <input type="text" placeholder="Filtrar por tipo" class="border rounded p-2" [(ngModel)]="typeFilter"
+          (input)="filterCards()">
+
+        <div class="flex justify-center ml-4">
+          <button (click)="previousPage()" [disabled]="currentPage === 1"
+            class="px-4 py-2 mx-2 bg-gray-300 rounded"> < </button>
+          <span class="px-4 py-2 mx-2">{{ currentPage }} / {{ totalPages }}</span>
+          <button (click)="nextPage()" [disabled]="currentPage === totalPages"
+            class="px-4 py-2 mx-2 bg-gray-300 rounded"> > </button>
+        </div>
+      </div>
+
+      <!-- Cartas do Usuário com Paginação -->
+      <div class="grid grid-cols-4 gap-4 my-cards-container">
+        <div *ngFor="let card of paginatedUserCards" class="border rounded p-2">
+          <img [src]="card.images.small" alt="{{card.name}}" class="w-full mb-2 my-cards">
+          <button *ngIf="selectedDeck" (click)="addCardToDeck(card)"
+            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 w-full">Adicionar</button>
+        </div>
+      </div>
+
+      <div *ngIf="!filteredUserCards.length" class="text-center mt-4">
+        <h3 class="text-lg font-semibold">Nenhuma carta encontrada</h3>
+      </div>
+    </div>
+  </div>
+</div>
