@@ -12,6 +12,8 @@ import { AuthService } from '../../services/auth/auth.service';
 import { User } from '../../models/user.model';
 import { boosterMocks } from '../../utils/booster-mocks';
 import { TooltipComponent } from '../../components/tooltip/tooltip';
+import Swal from 'sweetalert2'
+import { TYPE, toast } from '../../utils/toast-utils';
 
 @Component({
   selector: 'app-booster-shop',
@@ -34,7 +36,8 @@ export class BoosterShopComponent implements OnInit {
   boosters = boosterMocks;
   hoveredCard: Card | null = null;
 
-  allowedTypes: any = []
+  allowedTypes: any = [];
+  showSelections: boolean = true;
 
   constructor(
     private pokemonService: PokemonService, private appComponent: AppComponent, private authService: AuthService
@@ -82,7 +85,7 @@ export class BoosterShopComponent implements OnInit {
     if (!booster) return;
 
     if (this.user?.money && this.user.money < booster.price) {
-      alert('Você não tem dinheiro suficiente!');
+      toast(TYPE.WARNING, true, 'Você não tem dinheiro suficiente!');
       return;
     }
 
@@ -95,33 +98,40 @@ export class BoosterShopComponent implements OnInit {
     this.appComponent.showLoading();
     this.isLoading = true;
 
+    // const baseSeries = 'set.series:base';
     const pokemonLimit = 'nationalPokedexNumbers:[1 TO 250]';
+
+    const baseCardsQuery = this.selectedRarity === 'LEGEND'
+      ? `types:${this.selectedType} ${pokemonLimit} rarity:Rare`
+      : `types:${this.selectedType} ${pokemonLimit} rarity:${this.selectedRarity}`;
 
     const energyCards$ = this.pokemonService.searchCards('supertype:Energy subtypes:Basic');
     const trainerCards$ = this.pokemonService.searchCards('supertype:Trainer');
-    const baseCards$ = this.pokemonService.searchCards('set.series:base types:' + this.selectedType + ' ' + pokemonLimit);
-    const rareCards$ = this.pokemonService.searchCards('rarity:Rare types:' + this.selectedType + ' ' + pokemonLimit);
+    const baseCards$ = this.pokemonService.searchCards(baseCardsQuery);
+    // const rareCards$ = this.pokemonService.searchCards('rarity:Rare types:' + this.selectedType + ' ' + pokemonLimit);
 
-    forkJoin([baseCards$, rareCards$, trainerCards$, energyCards$]).pipe(
+    forkJoin([baseCards$, trainerCards$, energyCards$]).pipe(
       tap({
-        next: ([baseResponse, rareResponse, trainerResponse, energyResponse]) => {
-          const baseCards = getRandomElements(baseResponse.data, 9);
+        next: ([baseResponse, trainerResponse, energyResponse]) => {
+          const baseCards = getRandomElements(baseResponse.data, 10);
           const energyCards = getRandomElements(energyResponse.data, 5);
           const trainerCards = getRandomElements(trainerResponse.data, 5);
-          const rareCards = getRandomElements(rareResponse.data, 1);
+          // const rareCards = getRandomElements(rareResponse.data, 1);
 
-          this.cardsSubject.next([...baseCards, ...energyCards, ...trainerCards, ...rareCards]);
+          this.cardsSubject.next([...baseCards, ...energyCards, ...trainerCards]);
 
           // salva no usuário
           const currentUser = this.authService.getUser();
           if (currentUser) {
-            currentUser.cards = [...currentUser.cards, ...baseCards, ...energyCards, ...trainerCards, ...rareCards];
+            currentUser.cards = [...currentUser.cards, ...baseCards, ...energyCards, ...trainerCards];
             currentUser.money -= boosterPrice;
             currentUser.lastUpdate = new Date();
             this.authService.updateUser(currentUser);
           }
+          toast(TYPE.SUCCESS, true, 'Booster comprado com sucesso!');
           this.appComponent.hideLoading();
           this.isLoading = false;
+          this.showSelections = false;
         },
         error: () => {
           this.appComponent.hideLoading();
@@ -139,5 +149,12 @@ export class BoosterShopComponent implements OnInit {
   handleCloseModal() {
     this.isModalVisible = false;
     this.selectedImage = null;
+  }
+
+  resetBoosterSelection() {
+    this.selectedRarity = null;
+    this.selectedType = null;
+    this.showSelections = true;
+    this.cardsSubject.next([]);
   }
 }
