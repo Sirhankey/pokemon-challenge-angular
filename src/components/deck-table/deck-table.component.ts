@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ViewChild, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Card } from '../../models/card.model';
@@ -12,9 +12,9 @@ import { MatButtonModule } from '@angular/material/button';
   standalone: true,
   imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatPaginatorModule],
   templateUrl: './deck-table.component.html',
-  styleUrl: './deck-table.component.scss',
+  styleUrls: ['./deck-table.component.scss'],
 })
-export class DeckTableComponent implements OnInit, AfterViewInit {
+export class DeckTableComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() cards: Card[] = [];
   @Output() addCardToDeck = new EventEmitter<Card>();
 
@@ -30,6 +30,13 @@ export class DeckTableComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     if (this.paginator) {
       this.dataSource.paginator = this.paginator;
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
+    if (changes['cards']) {
+      this.processCards();
     }
   }
 
@@ -59,6 +66,10 @@ export class DeckTableComponent implements OnInit, AfterViewInit {
     });
 
     this.dataSource = new MatTableDataSource<Card>(processedCards);
+
+    if (this.paginator) {
+      this.dataSource.paginator = this.paginator;
+    }
   }
 
   onAddCardToDeck(card: Card) {
