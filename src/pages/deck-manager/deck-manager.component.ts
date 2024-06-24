@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Deck, User } from '../../models/user.model';
@@ -9,6 +9,9 @@ import { AuthService } from '../../services/auth/auth.service';
 import { v4 as uuidv4 } from 'uuid';
 import { DeckStatsComponent } from '../../components/deck-stats/deck-stats.component';
 import { MatExpansionPanel } from '@angular/material/expansion';
+import pokemonTypes from '../../utils/pokemon-types'; // Importa os tipos de Pokémon
+import Swal from 'sweetalert2';
+import { TYPE, toast } from '../../utils/toast-utils';
 
 @Component({
   selector: 'app-deck-manager',
@@ -17,7 +20,7 @@ import { MatExpansionPanel } from '@angular/material/expansion';
   templateUrl: './deck-manager.component.html',
   styleUrls: ['./deck-manager.component.scss']
 })
-export class DeckManagerComponent implements OnInit, AfterViewInit {
+export class DeckManagerComponent implements OnInit, AfterViewInit, OnChanges {
   decks: Deck[] = [];
   selectedDeck: Deck | null = null;
   newDeckName: string = '';
@@ -31,6 +34,8 @@ export class DeckManagerComponent implements OnInit, AfterViewInit {
   cardTypeFilter: string = '';
   typeFilter: string = '';
   showNewDeckInput: boolean = false;
+  allowedTypes_ = ['grass', 'fire', 'water', 'lightning', 'psychic', 'fighting'];
+  allowedTypes = pokemonTypes.filter(type => this.allowedTypes_.includes(type.type));
 
   // Pagination properties
   currentPage: number = 1;
@@ -62,18 +67,25 @@ export class DeckManagerComponent implements OnInit, AfterViewInit {
     this.expansionPanel.afterCollapse.subscribe(() => this.panelOpenState = false);
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('changes', changes);
+    if (changes['userCards']) {
+      this.filterCards();
+    }
+  }
+
   toggleNewDeckInput() {
     this.showNewDeckInput = !this.showNewDeckInput;
   }
 
   createDeck() {
     if (this.newDeckName.trim().length === 0) {
-      alert('O nome do baralho não pode estar vazio');
+      toast(TYPE.ERROR, true, 'O nome do baralho não pode estar vazio!');
       return;
     }
 
     if (this.decks.find(d => d.name === this.newDeckName)) {
-      alert('O nome do baralho já existe');
+      toast(TYPE.WARNING, true, 'O nome do baralho já existe!');
       return;
     }
 
@@ -119,9 +131,9 @@ export class DeckManagerComponent implements OnInit, AfterViewInit {
         this.updateDeckCounts();
         this.sortSelectedCards();
       } else if (sameCards.length >= 4) {
-        alert('Você só pode ter no máximo 4 cartas com o mesmo nome no baralho.');
+        toast(TYPE.WARNING, true, 'Você só pode ter no máximo 4 cartas com o mesmo nome no baralho.');
       } else {
-        alert('Você atingiu o tamanho máximo do baralho.');
+        toast(TYPE.WARNING, true, 'Você atingiu o tamanho máximo do baralho.');
       }
     }
   }
@@ -139,7 +151,7 @@ export class DeckManagerComponent implements OnInit, AfterViewInit {
   saveDeck(): void {
     if (this.selectedDeck) {
       if (this.selectedCards.length < this.minDeckSize) {
-        alert('O baralho deve ter no mínimo 24 cartas.');
+        toast(TYPE.WARNING, true, 'O baralho deve ter no mínimo 24 cartas.');
         return;
       }
 
@@ -154,6 +166,9 @@ export class DeckManagerComponent implements OnInit, AfterViewInit {
 
       this.selectedDeck = null;
       this.selectedCards = [];
+
+      this.userCards = this.user!.cards;
+      this.filterCards();
     }
   }
 
@@ -163,13 +178,29 @@ export class DeckManagerComponent implements OnInit, AfterViewInit {
 
   filterCards(): void {
     this.filteredUserCards = this.userCards.filter(card => {
+      const cardTypesLower = card.types?.map(type => type.toLowerCase());
       return (this.cardTypeFilter === '' || card.supertype === this.cardTypeFilter) &&
-        (this.typeFilter === '' || card.types?.includes(this.typeFilter));
+        (this.typeFilter === '' || cardTypesLower?.includes(this.typeFilter.toLowerCase()));
     });
+
+    if (this.cardTypeFilter === '' && this.typeFilter === '') {
+      this.filteredUserCards.sort((a, b) => {
+        const order = ['Pokémon', 'Trainer', 'Energy'];
+        const typeComparison = order.indexOf(a.supertype) - order.indexOf(b.supertype);
+        if (typeComparison === 0 && a.supertype === 'Pokémon' && b.supertype === 'Pokémon') {
+          const aPokedexNumber = a.nationalPokedexNumbers ? a.nationalPokedexNumbers[0] : 0;
+          const bPokedexNumber = b.nationalPokedexNumbers ? b.nationalPokedexNumbers[0] : 0;
+          return aPokedexNumber - bPokedexNumber;
+        }
+        return typeComparison;
+      });
+    }
+
     this.totalPages = Math.ceil(this.filteredUserCards.length / this.itemsPerPage);
     this.currentPage = 1;
     this.updatePaginatedUserCards();
   }
+
 
   updatePaginatedUserCards(): void {
     const start = (this.currentPage - 1) * this.itemsPerPage;
@@ -217,5 +248,21 @@ export class DeckManagerComponent implements OnInit, AfterViewInit {
   onPanelStateChange(state: boolean) {
     console.log('panel state changed', state);
     this.panelOpenState = state;
+  }
+
+  onTypeFilterSelect(type: string) {
+    this.typeFilter = type;
+    this.filterCards();
+  }
+
+  clearFilters() {
+    this.cardTypeFilter = '';
+    this.typeFilter = '';
+    this.filterCards();
+  }
+
+  getPokemonTypeIcon(type: string): string {
+    const typeIcon = pokemonTypes.find(t => t.type === type.toLowerCase());
+    return typeIcon ? typeIcon.src : '';
   }
 }

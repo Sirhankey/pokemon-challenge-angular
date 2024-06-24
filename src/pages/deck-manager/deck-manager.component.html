@@ -41,7 +41,7 @@
     <div class="w-3-5 p-4">
       <h2 class="text-xl font-semibold mb-4">Suas Cartas</h2>
 
-      <div class="flex mb-4">
+      <div class="flex mb-4 items-center">
         <select class="border rounded p-2 mr-2" [(ngModel)]="cardTypeFilter" (change)="filterCards()">
           <option value="">Todos</option>
           <option value="Pokémon">Pokémon</option>
@@ -51,13 +51,23 @@
         <input type="text" placeholder="Filtrar por tipo" class="border rounded p-2" [(ngModel)]="typeFilter"
           (input)="filterCards()">
 
-        <div class="flex justify-center ml-4">
-          <button (click)="previousPage()" [disabled]="currentPage === 1"
-            class="px-4 py-2 mx-2 bg-gray-300 rounded"> < </button>
-          <span class="px-4 py-2 mx-2">{{ currentPage }} / {{ totalPages }}</span>
-          <button (click)="nextPage()" [disabled]="currentPage === totalPages"
-            class="px-4 py-2 mx-2 bg-gray-300 rounded"> > </button>
+        <div class="flex ml-4 space-x-2">
+          <div *ngFor="let type of allowedTypes" class="relative cursor-pointer" (click)="onTypeFilterSelect(type.type)">
+            <img
+              [src]="getPokemonTypeIcon(type.type)"
+              [alt]="type.type"
+              [title]="type.type"
+              [ngClass]="type.className"
+              class="w-8 h-8 rounded-full hover:shadow-lg p-1 custom-shadow transition-all duration-300"
+              [class.border-4]="typeFilter === type.type"
+              [class.border-black-500]="typeFilter === type.type">
+          </div>
         </div>
+
+        <button (click)="clearFilters()" class="ml-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">Limpar Filtros</button>
+
+
+
       </div>
 
       <!-- Cartas do Usuário com Paginação -->
@@ -67,6 +77,14 @@
           <button *ngIf="selectedDeck" (click)="addCardToDeck(card)"
             class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 w-full">Adicionar</button>
         </div>
+      </div>
+
+      <div class="flex justify-center mt-4">
+        <button (click)="previousPage()" [disabled]="currentPage === 1"
+          class="px-4 py-2 mx-2 bg-gray-300 rounded"> < </button>
+        <span class="px-4 py-2 mx-2">{{ currentPage }} / {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages"
+          class="px-4 py-2 mx-2 bg-gray-300 rounded"> > </button>
       </div>
 
       <div *ngIf="!filteredUserCards.length" class="text-center mt-4">
