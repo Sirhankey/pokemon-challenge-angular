@@ -3,6 +3,9 @@ import { AuthService } from '../../services/auth/auth.service';
 import { Route, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { User } from '../../models/user.model';
+import { AudioService } from '../../services/audio/audio.service';
+import Swal from 'sweetalert2';
+import { TYPE, toast } from '../../utils/toast-utils';
 
 @Component({
   selector: 'app-header',
@@ -19,7 +22,7 @@ export class HeaderComponent implements OnInit{
   totalCards: number = 0;
 
   constructor(
-    private authService: AuthService, private router: Router
+    private authService: AuthService, private router: Router, private audioService: AudioService
   ) { }
 
   ngOnInit(): void {
@@ -38,6 +41,8 @@ export class HeaderComponent implements OnInit{
   }
 
   logout() {
+    toast(TYPE.SUCCESS, true, 'Valeu treinador!');
+    this.audioService.stop();
     this.authService.logout();
     this.router.navigate(['/login']);
   }
