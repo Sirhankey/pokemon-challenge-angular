@@ -8,11 +8,7 @@ Este aplicativo é uma interface para a API [Pokemon TCG](https://api.pokemontcg
 
 ## Instalação
 
-Antes de executar o projeto, certifique-se de ter [Node.js](https://nodejs.org/) instalado. Em seguida, instale o Angular CLI globalmente:
-
-```bash
-npm install -g @angular/cli
-```
+Antes de executar o projeto, certifique-se de ter [Node.js](https://nodejs.org/) instalado. 
 
 Após clonar o repositório, navegue até o diretório do projeto e instale as dependências:
 
