@@ -1,10 +1,13 @@
 <header class="bg-gray-800 text-white p-4 flex justify-between items-center header-container">
-  <div *ngIf="isAuthenticated" class="text-container">
-    <img src="assets/loading/2.png" alt="Pokéball" class="pokeball" (click)="goHome()"/>
-    <span class="text-xl font-bold">{{ trainerName }}</span>
-    <span>{{ money | currency }}</span>
-    <span>Total cards: {{ totalCards }}</span>
-
+  <div *ngIf="isAuthenticated" class="text-container flex items-center">
+    <img src="assets/loading/2.png" alt="Pokéball" class="pokeball cursor-pointer" (click)="goHome()"/>
+    <span class="text-xl font-bold ml-4">{{ trainerName }}</span>
+    <span class="ml-4">{{ money | currency }}</span>
+    <span class="ml-4">Total cards: {{ totalCards }}</span>
+    <button (click)="toggleAudio()" [ngClass]="{'bg-red-500': isPlaying, 'bg-green-500': !isPlaying}" class="ml-4 p-1 rounded">
+      <span *ngIf="isPlaying">Pause</span>
+      <span *ngIf="!isPlaying">Play</span>
+    </button>
   </div>
   <button *ngIf="isAuthenticated" (click)="logout()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded" style="font-size: x-small;">Logout</button>
 </header>
