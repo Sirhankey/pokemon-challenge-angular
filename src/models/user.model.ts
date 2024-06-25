@@ -1,22 +1,22 @@
-import { Card } from "./card.model";
+import { TCard } from "./card.model";
 
-export interface User {
+export type TUser = {
   id: string;
   name: string;
   email: string;
   password: string;
-  cards:  Card[];
-  decks: Deck[];
+  cards:  TCard[];
+  decks: TDeck[];
   money: number;
   createdAt: Date;
   lastLogin: Date;
   lastUpdate: Date;
 }
 
-export interface Deck {
+export type TDeck = {
   id: string;
   name: string;
-  cards: Card[];
+  cards: TCard[];
   deckTypes: string[];
   pokemonsCount: number;
   trainersCount: number;

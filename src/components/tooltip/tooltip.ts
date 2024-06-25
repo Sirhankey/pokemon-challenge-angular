@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Card } from '../../models/card.model';
+import { TCard } from '../../models/card.model';
 
 @Component({
   selector: 'app-tooltip',
@@ -58,5 +58,5 @@ import { Card } from '../../models/card.model';
   `]
 })
 export class TooltipComponent {
-  @Input() card!: Card;
+  @Input() card!: TCard;
 }

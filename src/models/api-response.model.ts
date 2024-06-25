@@ -1,7 +1,7 @@
-import { Card } from "./card.model";
+import { TCard } from "./card.model";
 
 export interface ApiResponse {
-  data: Card[];
+  data: TCard[];
   page: number;
   pageSize: number;
   count: number;

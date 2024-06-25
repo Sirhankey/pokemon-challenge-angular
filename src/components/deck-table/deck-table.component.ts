@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, ViewChild, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { Card } from '../../models/card.model';
+import { TCard } from '../../models/card.model';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,11 +15,11 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrls: ['./deck-table.component.scss'],
 })
 export class DeckTableComponent implements OnInit, AfterViewInit, OnChanges {
-  @Input() cards: Card[] = [];
-  @Output() addCardToDeck = new EventEmitter<Card>();
+  @Input() cards: TCard[] = [];
+  @Output() addCardToDeck = new EventEmitter<TCard>();
 
   columnsToDisplay = ['pokedexNumber', 'image', 'name', 'quantity', 'type', 'actions'];
-  dataSource: MatTableDataSource<Card> = new MatTableDataSource<Card>();
+  dataSource: MatTableDataSource<TCard> = new MatTableDataSource<TCard>();
 
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
 
@@ -41,7 +41,7 @@ export class DeckTableComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   processCards() {
-    const cardMap: { [name: string]: Card & { quantity: number } } = {};
+    const cardMap: { [name: string]: TCard & { quantity: number } } = {};
 
     this.cards.forEach(card => {
       if (cardMap[card.name]) {
@@ -65,14 +65,14 @@ export class DeckTableComponent implements OnInit, AfterViewInit, OnChanges {
       return typeComparison;
     });
 
-    this.dataSource = new MatTableDataSource<Card>(processedCards);
+    this.dataSource = new MatTableDataSource<TCard>(processedCards);
 
     if (this.paginator) {
       this.dataSource.paginator = this.paginator;
     }
   }
 
-  onAddCardToDeck(card: Card) {
+  onAddCardToDeck(card: TCard) {
     this.addCardToDeck.emit(card);
   }
 }

@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, OnInit, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { Deck, User } from '../../models/user.model';
-import { Card } from '../../models/card.model';
+import { TDeck, TUser } from '../../models/user.model';
+import { TCard } from '../../models/card.model';
 import { DeckService } from '../../services/deck/deck.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -21,16 +21,16 @@ import { TYPE, toast } from '../../utils/toast-utils';
   styleUrls: ['./deck-manager.component.scss']
 })
 export class DeckManagerComponent implements OnInit, AfterViewInit, OnChanges {
-  decks: Deck[] = [];
-  selectedDeck: Deck | null = null;
+  decks: TDeck[] = [];
+  selectedDeck: TDeck | null = null;
   newDeckName: string = '';
-  userCards: Card[] = [];
-  selectedCards: Card[] = [];
-  filteredUserCards: Card[] = [];
-  paginatedUserCards: Card[] = [];
+  userCards: TCard[] = [];
+  selectedCards: TCard[] = [];
+  filteredUserCards: TCard[] = [];
+  paginatedUserCards: TCard[] = [];
   maxDeckSize = 60;
   minDeckSize = 24;
-  user: User | null = null;
+  user: TUser | null = null;
   cardTypeFilter: string = '';
   typeFilter: string = '';
   showNewDeckInput: boolean = false;
@@ -89,7 +89,7 @@ export class DeckManagerComponent implements OnInit, AfterViewInit, OnChanges {
       return;
     }
 
-    const newDeck: Deck = {
+    const newDeck: TDeck = {
       id: uuidv4(),
       name: this.newDeckName,
       cards: [],
@@ -106,13 +106,13 @@ export class DeckManagerComponent implements OnInit, AfterViewInit, OnChanges {
     this.selectDeck(newDeck);
   }
 
-  selectDeck(deck: Deck): void {
+  selectDeck(deck: TDeck): void {
     this.selectedDeck = deck;
     this.selectedCards = deck.cards;
     this.sortSelectedCards();
   }
 
-  removeDeck(deck: Deck): void {
+  removeDeck(deck: TDeck): void {
     this.decks = this.decks.filter(d => d.id !== deck.id);
     if (this.selectedDeck?.id === deck.id) {
       this.selectedDeck = null;
@@ -121,7 +121,7 @@ export class DeckManagerComponent implements OnInit, AfterViewInit, OnChanges {
     this.deckService.deleteDeck(deck);
   }
 
-  addCardToDeck(card: Card): void {
+  addCardToDeck(card: TCard): void {
     if (this.selectedDeck) {
       const sameCards = this.selectedCards.filter(c => c.name === card.name);
       if (sameCards.length < 4 && this.selectedCards.length < this.maxDeckSize) {
@@ -138,7 +138,7 @@ export class DeckManagerComponent implements OnInit, AfterViewInit, OnChanges {
     }
   }
 
-  removeCardFromDeck(card: Card): void {
+  removeCardFromDeck(card: TCard): void {
     if (this.selectedDeck) {
       this.selectedCards = this.selectedCards.filter(c => c !== card);
       this.userCards.push(card);
@@ -172,7 +172,7 @@ export class DeckManagerComponent implements OnInit, AfterViewInit, OnChanges {
     }
   }
 
-  viewDeckDetails(deck: Deck): void {
+  viewDeckDetails(deck: TDeck): void {
     this.selectDeck(deck);
   }
 

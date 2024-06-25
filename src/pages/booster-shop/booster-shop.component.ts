@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Card } from '../../models/card.model';
 import { PokemonService } from '../../services/pokemon/pokemon.service';
 import { getRandomElements } from '../../utils/utility';
 import { CardModalComponent } from '../../components/card-modal/card-modal.component';
@@ -9,11 +8,11 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from '../../app/app.component';
 import pokemonTypes from '../../utils/pokemon-types';
 import { AuthService } from '../../services/auth/auth.service';
-import { User } from '../../models/user.model';
 import { boosterMocks } from '../../utils/booster-mocks';
 import { TooltipComponent } from '../../components/tooltip/tooltip';
-import Swal from 'sweetalert2'
 import { TYPE, toast } from '../../utils/toast-utils';
+import { TCard } from '../../models/card.model';
+import { TUser } from '../../models/user.model';
 
 @Component({
   selector: 'app-booster-shop',
@@ -23,8 +22,9 @@ import { TYPE, toast } from '../../utils/toast-utils';
   styleUrls: ['./booster-shop.component.scss']
 })
 export class BoosterShopComponent implements OnInit {
-  private cardsSubject = new BehaviorSubject<Card[]>([]);
+  private cardsSubject = new BehaviorSubject<TCard[]>([]);
   cards$ = this.cardsSubject.asObservable();
+
   types: string[] = [];
   selectedType: string | null = null;
   selectedRarity: string | null = null;
@@ -32,9 +32,9 @@ export class BoosterShopComponent implements OnInit {
   isModalVisible: boolean = false;
   hoverType: string | null = null;
   isLoading: boolean = false;
-  user: User | null = null;
+  user: TUser | null = null;
   boosters = boosterMocks;
-  hoveredCard: Card | null = null;
+  hoveredCard: TCard | null = null;
 
   allowedTypes: any = [];
   showSelections: boolean = true;

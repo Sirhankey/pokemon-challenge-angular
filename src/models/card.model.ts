@@ -1,4 +1,4 @@
-export interface Card {
+export type TCard = {
   id: string;
   name: string;
   supertype: string;
@@ -8,37 +8,37 @@ export interface Card {
   evolvesFrom?: string;
   evolvesTo?: string[];
   rules?: string[];
-  ancientTrait?: IAncientTrait;
-  abilities?: IAbility[];
-  attacks?: IAttack[];
-  weaknesses?: IWeakness[];
-  resistances?: IResistance[];
+  ancientTrait?: TAncientTrait;
+  abilities?: TAbility[];
+  attacks?: TAttack[];
+  weaknesses?: TWeakness[];
+  resistances?: TResistance[];
   retreatCost?: string[];
   convertedRetreatCost?: number;
-  set: ISet;
+  set: TSet;
   number: string;
   artist?: string;
   rarity: string;
   flavorText?: string;
   nationalPokedexNumbers?: number[];
-  legalities: ILegality;
-  images: ICardImage;
-  tcgplayer?: ITCGPlayer;
-  cardmarket?: ICardmarket;
+  legalities: TLegality;
+  images: TCardImage;
+  tcgplayer?: TTCGPlayer;
+  cardmarket?: TCardmarket;
 }
 
-export interface IAncientTrait {
+export type TAncientTrait = {
   name: string;
   text: string;
 }
 
-export interface IAbility {
+export type TAbility = {
   name: string;
   text: string;
   type: string;
 }
 
-export interface IAttack {
+export type TAttack = {
   cost: string[];
   name: string;
   text: string;
@@ -46,55 +46,55 @@ export interface IAttack {
   convertedEnergyCost: number;
 }
 
-export interface IWeakness {
+export type TWeakness = {
   type: string;
   value: string;
 }
 
-export interface IResistance {
+export type TResistance = {
   type: string;
   value: string;
 }
 
-export interface ISet {
+export type TSet = {
   id: string;
   name: string;
   series: string;
   printedTotal: number;
   total: number;
-  legalities: ILegality;
+  legalities: TLegality;
   ptcgoCode: string;
   releaseDate: string;
   updatedAt: string;
-  images: ISetImage;
+  images: TSetImage;
 }
 
-export interface ISetImage {
+export type TSetImage = {
   symbol: string;
   logo: string;
 }
 
-export interface ILegality {
+export type TLegality = {
   unlimited: string;
   expanded: string;
 }
 
-export interface ICardImage {
+export type TCardImage = {
   small: string;
   large: string;
 }
 
-export interface ITCGPlayer {
+export type TTCGPlayer = {
   url: string;
   updatedAt: string;
-  prices: ITCGPlayerPrices;
+  prices: TTCGPlayerPrices;
 }
 
-export interface ITCGPlayerPrices {
-  holofoil: IPrice;
+export type TTCGPlayerPrices = {
+  holofoil: TPrice;
 }
 
-export interface IPrice {
+export type TPrice = {
   low: number;
   mid: number;
   high: number;
@@ -102,13 +102,13 @@ export interface IPrice {
   directLow?: number;
 }
 
-export interface ICardmarket {
+export type TCardmarket = {
   url: string;
   updatedAt: string;
-  prices: ICardmarketPrices;
+  prices: TCardmarketPrices;
 }
 
-export interface ICardmarketPrices {
+export type TCardmarketPrices = {
   averageSellPrice: number;
   lowPrice: number;
   trendPrice: number;

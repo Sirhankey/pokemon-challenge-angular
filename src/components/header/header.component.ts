@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth/auth.service';
 import { Route, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { User } from '../../models/user.model';
+import { TUser } from '../../models/user.model';
 import { AudioService } from '../../services/audio/audio.service';
 import Swal from 'sweetalert2';
 import { TYPE, toast } from '../../utils/toast-utils';
@@ -18,7 +18,7 @@ export class HeaderComponent implements OnInit{
   trainerName: string = '';
   money: number = 0;
   isAuthenticated: boolean = false;
-  user: User | null = null;
+  user: TUser | null = null;
   totalCards: number = 0;
 
   constructor(

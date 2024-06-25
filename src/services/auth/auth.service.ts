@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
 import { userMocks } from '../../utils/user-mocks';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { User } from '../../models/user.model';
+import { TUser } from '../../models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private userSubject: BehaviorSubject<User | null>;
-  public user$: Observable<User | null>;
+  private userSubject: BehaviorSubject<TUser | null>;
+  public user$: Observable<TUser | null>;
 
   constructor() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    this.userSubject = new BehaviorSubject<User | null>(user);
+    this.userSubject = new BehaviorSubject<TUser | null>(user);
     this.user$ = this.userSubject.asObservable();
    }
 
@@ -35,7 +35,7 @@ export class AuthService {
     this.userSubject.next(null);
   }
 
-  getUser(): User | null{
+  getUser(): TUser | null{
     return this.userSubject.value;
   }
 

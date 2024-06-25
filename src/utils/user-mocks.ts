@@ -1,6 +1,6 @@
-import { User } from "../models/user.model";
+import { TUser } from "../models/user.model";
 
-export const userMocks: User[] = [
+export const userMocks: TUser[] = [
   {
     id: '1',
     name: 'Ash Ketchum',

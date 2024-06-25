@@ -1,8 +1,9 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { Deck } from '../../models/user.model';
+import { TDeck } from '../../models/user.model';
 import pokemonTypes from '../../utils/pokemon-types';
 import { CommonModule } from '@angular/common';
+import { TCard } from '../../models/card.model';
 
 @Component({
   selector: 'app-deck-stats',
@@ -12,7 +13,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./deck-stats.component.scss']
 })
 export class DeckStatsComponent {
-  @Input() selectedDeck: Deck | null = null;
+  @Input() selectedDeck: TDeck | null = null;
   @Output() panelStateChange = new EventEmitter<boolean>();
 
   panelOpenState = false;
@@ -27,15 +28,15 @@ export class DeckStatsComponent {
   }
 
   get totalPokemons(): number {
-    return this.selectedDeck?.cards.filter(card => card.supertype === 'Pokémon').length || 0;
+    return this.selectedDeck?.cards.filter((card: TCard) => card.supertype === 'Pokémon').length || 0;
   }
 
   get totalEnergy(): number {
-    return this.selectedDeck?.cards.filter(card => card.supertype === 'Energy').length || 0;
+    return this.selectedDeck?.cards.filter((card: TCard) => card.supertype === 'Energy').length || 0;
   }
 
   get totalTrainers(): number {
-    return this.selectedDeck?.cards.filter(card => card.supertype === 'Trainer').length || 0;
+    return this.selectedDeck?.cards.filter((card: TCard) => card.supertype === 'Trainer').length || 0;
   }
 
   get pokemonTypes(): { type: string, count: number, icon: string, bg: string }[] {

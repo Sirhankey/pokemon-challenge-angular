@@ -1,5 +1,5 @@
+import { TDeck, TUser } from './../../models/user.model';
 import { Injectable } from '@angular/core';
-import { Deck } from '../../models/user.model';
 import { BehaviorSubject } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 
@@ -7,48 +7,52 @@ import { AuthService } from '../auth/auth.service';
   providedIn: 'root'
 })
 export class DeckService {
-  private deckSubject = new BehaviorSubject<Deck[]>([]);
-  decks$ = this.deckSubject.asObservable();
+  private deckSubject = new BehaviorSubject<TDeck[]>([]);
+  public decks$ = this.deckSubject.asObservable();
+  private user: TUser | null = null;
 
   constructor(
     private authService: AuthService,
   ) {
-    this.loadUserDecks();
+    // Subscribe to the user$ observable
+    this.authService.user$.subscribe(user => {
+      this.user = user;
+      this.loadUserDecks();
+    });
   }
 
   private loadUserDecks(): void {
-    const user = this.authService.getUser();
-    if (user) {
-      this.deckSubject.next(user.decks);
+    if (this.user && this.user.decks) {
+      this.deckSubject.next(this.user.decks);
+    } else {
+      this.deckSubject.next([]);
     }
   }
 
-  addDeck(deck: Deck): void {
-    const user = this.authService.getUser();
-    if (user) {
-      user.decks.push(deck);
-      this.authService.updateUser(user);
-      this.deckSubject.next(user.decks);
+  addDeck(deck: TDeck): void {
+    if (this.user) {
+      this.user.decks.push(deck);
+      this.authService.updateUser(this.user);
+      this.deckSubject.next(this.user.decks);
     }
   }
 
-  updateDeck(deck: Deck): void {
-    const user = this.authService.getUser();
-    if (user) {
-      const index = user.decks.findIndex(d => d.id === deck.id);
-      user.decks[index] = deck;
-      this.authService.updateUser(user);
-      this.deckSubject.next(user.decks);
+  updateDeck(deck: TDeck): void {
+    if (this.user) {
+      const index = this.user.decks.findIndex((d: TDeck) => d.id === deck.id);
+      if (index !== -1) {
+        this.user.decks[index] = deck;
+        this.authService.updateUser(this.user);
+        this.deckSubject.next(this.user.decks);
+      }
     }
   }
 
-  deleteDeck(deck: Deck): void {
-    const user = this.authService.getUser();
-    if (user) {
-      user.decks = user.decks.filter(d => d.id !== deck.id);
-      this.authService.updateUser(user);
-      this.deckSubject.next(user.decks);
+  deleteDeck(deck: TDeck): void {
+    if (this.user) {
+      this.user.decks = this.user.decks.filter((d: TDeck) => d.id !== deck.id);
+      this.authService.updateUser(this.user);
+      this.deckSubject.next(this.user.decks);
     }
   }
-
 }
