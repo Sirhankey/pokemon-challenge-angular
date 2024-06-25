@@ -37,7 +37,6 @@ export class DeckManagerComponent implements OnInit, AfterViewInit, OnChanges {
   allowedTypes_ = ['grass', 'fire', 'water', 'lightning', 'psychic', 'fighting'];
   allowedTypes = pokemonTypes.filter(type => this.allowedTypes_.includes(type.type));
 
-  // Pagination properties
   currentPage: number = 1;
   itemsPerPage: number = 12;
   totalPages: number = 1;
