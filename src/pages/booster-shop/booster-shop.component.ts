@@ -3,12 +3,12 @@ import { Component, OnInit } from '@angular/core';
 import { PokemonService } from '../../services/pokemon/pokemon.service';
 import { getRandomElements } from '../../utils/utility';
 import { CardModalComponent } from '../../components/card-modal/card-modal.component';
-import { BehaviorSubject, catchError, forkJoin, of, tap } from 'rxjs';
+import { BehaviorSubject, Subscription, catchError, forkJoin, of, tap } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { AppComponent } from '../../app/app.component';
 import pokemonTypes from '../../utils/pokemon-types';
 import { AuthService } from '../../services/auth/auth.service';
-import { boosterMocks } from '../../utils/booster-mocks';
+import { TBooster, boosterMocks } from '../../utils/booster-mocks';
 import { TooltipComponent } from '../../components/tooltip/tooltip';
 import { TYPE, toast } from '../../utils/toast-utils';
 import { TCard } from '../../models/card.model';
@@ -33,19 +33,30 @@ export class BoosterShopComponent implements OnInit {
   hoverType: string | null = null;
   isLoading: boolean = false;
   user: TUser | null = null;
-  boosters = boosterMocks;
+  boosters: TBooster[] = [];
   hoveredCard: TCard | null = null;
 
   allowedTypes: any = [];
   showSelections: boolean = true;
+
+  private userSubscription: Subscription | null = null;
 
   constructor(
     private pokemonService: PokemonService, private appComponent: AppComponent, private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.boosters = boosterMocks;
     this.loadCardTypes();
-    this.user = this.authService.getUser();
+    this.userSubscription = this.authService.user$.subscribe(user => {
+      this.user = user;
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
   }
 
   selectRarity(rarity: string) {
@@ -98,9 +109,7 @@ export class BoosterShopComponent implements OnInit {
     this.appComponent.showLoading();
     this.isLoading = true;
 
-    // const baseSeries = 'set.series:base';
     const pokemonLimit = 'nationalPokedexNumbers:[1 TO 250]';
-
     const baseCardsQuery = this.selectedRarity === 'LEGEND'
       ? `types:${this.selectedType} ${pokemonLimit} rarity:Rare`
       : `types:${this.selectedType} ${pokemonLimit} rarity:${this.selectedRarity}`;
@@ -108,7 +117,6 @@ export class BoosterShopComponent implements OnInit {
     const energyCards$ = this.pokemonService.searchCards('supertype:Energy subtypes:Basic');
     const trainerCards$ = this.pokemonService.searchCards('supertype:Trainer');
     const baseCards$ = this.pokemonService.searchCards(baseCardsQuery);
-    // const rareCards$ = this.pokemonService.searchCards('rarity:Rare types:' + this.selectedType + ' ' + pokemonLimit);
 
     forkJoin([baseCards$, trainerCards$, energyCards$]).pipe(
       tap({
@@ -116,11 +124,9 @@ export class BoosterShopComponent implements OnInit {
           const baseCards = getRandomElements(baseResponse.data, 10);
           const energyCards = getRandomElements(energyResponse.data, 5);
           const trainerCards = getRandomElements(trainerResponse.data, 5);
-          // const rareCards = getRandomElements(rareResponse.data, 1);
 
           this.cardsSubject.next([...baseCards, ...energyCards, ...trainerCards]);
 
-          // salva no usuário
           const currentUser = this.authService.getUser();
           if (currentUser) {
             currentUser.cards = [...currentUser.cards, ...baseCards, ...energyCards, ...trainerCards];

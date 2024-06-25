@@ -6,15 +6,11 @@
   <div class="mb-4 flex justify-center" *ngIf="showSelections">
     <button
       *ngFor="let booster of boosters"
+      class="py-2 px-4 m-2 rounded text-white"
       [ngClass]="{
         'bg-gray-500': booster.rarity === 'Common',
         'bg-blue-500': booster.rarity === 'Rare',
         'bg-yellow-500': booster.rarity === 'LEGEND',
-        'text-white': true,
-        'py-2': true,
-        'px-4': true,
-        'm-2': true,
-        'rounded': true,
         'hover:bg-gray-700': booster.rarity === 'Common' && !isLoading,
         'hover:bg-blue-700': booster.rarity === 'Rare' && !isLoading,
         'hover:bg-yellow-700': booster.rarity === 'LEGEND' && !isLoading,
