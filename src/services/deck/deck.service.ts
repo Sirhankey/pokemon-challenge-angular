@@ -14,7 +14,6 @@ export class DeckService {
   constructor(
     private authService: AuthService,
   ) {
-    // Subscribe to the user$ observable
     this.authService.user$.subscribe(user => {
       this.user = user;
       this.loadUserDecks();

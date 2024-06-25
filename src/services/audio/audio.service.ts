@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AudioService {
+  private isPlayingSubject = new BehaviorSubject<boolean>(false);
+  public isPlaying$: Observable<boolean> = this.isPlayingSubject.asObservable();
   private audio: HTMLAudioElement;
 
   constructor() {
@@ -15,20 +18,19 @@ export class AudioService {
   }
 
   play(): void {
-    this.audio.play().catch(error => console.log('Error playing audio:', error));
+    this.audio.play();
+    this.isPlayingSubject.next(true);
   }
 
   pause(): void {
     this.audio.pause();
+    this.isPlayingSubject.next(false);
   }
 
   stop(): void {
     this.audio.pause();
     this.audio.currentTime = 0;
-  }
-
-  isPlaying(): boolean {
-    return !this.audio.paused;
+    this.isPlayingSubject.next(false);
   }
 }
 
