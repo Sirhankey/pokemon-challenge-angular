@@ -1,3 +1,10 @@
+export type TBooster = {
+  name: string;
+  price: number;
+  src: string;
+  rarity: string;
+}
+
 export const boosterMocks = [
   {
     name:'Commom Booster',
